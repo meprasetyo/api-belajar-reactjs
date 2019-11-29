@@ -3,9 +3,10 @@
 $type = $_GET['tp']; 
 if($type=='signup') signup(); 
 elseif($type=='login') login(); 
-elseif($type=='feed') feed(); 
-elseif($type=='feedUpdate') feedUpdate(); 
-elseif($type=='feedDelete') feedDelete(); 
+elseif($type=='karyawan') karyawan(); 
+elseif($type=='karyawanUpdate') karyawanUpdate(); 
+elseif($type=='karyawanDelete') karyawanDelete(); 
+elseif($type=='karyawanEdit') karyawanEdit(); 
 function login() 
 { 
     require 'config.php'; 
@@ -86,63 +87,83 @@ function signup() {
 }
 
 
-function feed(){
+function karyawan(){
     
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
     $user_id=$json['user_id'];
     
-    $query = "SELECT * FROM feed WHERE user_id=$user_id ";
+    $query = "SELECT * FROM karyawan";
     //$query = "SELECT * FROM feed ";
     $result = $db->query($query); 
 
-    $feedData = mysqli_fetch_all($result,MYSQLI_ASSOC);
-    $feedData=json_encode($feedData);
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
     
-    echo '{"feedData":'.$feedData.'}';
+    echo '{"karyawanData":'.$karyawanData.'}';
     
 }
 
 
-function feedUpdate(){
+function karyawanUpdate(){
 
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
-    $user_id=$json['user_id'];
-    $feed=$json['feed'];
+   // $user_id=$json['user_id'];
+    $nama=$json['nama'];
+	$KTP=$json['KTP'];
+	$no_hp=$json['no_hp'];
     
     $feedData = '';
-    if($user_id !=0)
+    if($nama !='')
     {
-        $query = "INSERT INTO feed ( feed, user_id) VALUES ('$feed','$user_id')";
+        $query = "INSERT INTO karyawan ( KTP, nama, no_hp) VALUES ('$KTP','$nama','$no_hp')";
         $db->query($query);              
     }
-    $query = "SELECT * FROM feed WHERE user_id=$user_id";
+ 
+    $query = "SELECT * FROM karyawan WHERE KTP = $KTP ";
     $result = $db->query($query); 
 
-    $feedData = mysqli_fetch_all($result,MYSQLI_ASSOC);
-    $feedData=json_encode($feedData);
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
     
-    echo '{"feedData":'.$feedData.'}';
+    echo '{"karyawanData":'.$karyawanData.'}';
 
 }
 
-function feedDelete(){
+function karyawanDelete(){
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
-    $user_id=$json['user_id'];
-    $feed_id=$json['feed_id'];
+    $id_karyawan=$json['id_karyawan'];
 
-    $query = "Delete FROM feed WHERE user_id=$user_id AND feed_id=$feed_id";
+    $query = "Delete FROM karyawan WHERE id_karyawan=$id_karyawan ";
     $result = $db->query($query);
     if($result)       
     {        
-        echo '{"success":"Feed deleted"}';
+        echo '{"success":"karyawan deleted"}';
     } else{
 
         echo '{"error":"Delete error"}';
     }
     
 }
+/*
+function karyawanEdit(){
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $KTP=$json['KTP'];
+
+    $query = " Update karyawan set KTP = '$KTP', nama = '$nama', no_hp = '$no_hp' WHERE KTP=$KTP ";
+    $result = $db->query($query);
+    if($result)       
+    {        
+        echo '{"success":"karyawan diganti"}';
+    } else{
+
+        echo '{"error":"Delete error"}';
+    }
+    
+}*/
+
 
 ?>
