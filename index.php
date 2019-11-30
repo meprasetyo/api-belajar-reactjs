@@ -14,33 +14,27 @@ function login()
     $userData =''; $query = "select * from users where username='$username' and password='$password'"; 
     $result= $db->query($query);
     $rowCount=$result->num_rows;
-
     if($rowCount>0)
     {
 		$userData = $result->fetch_object();
 		$user_id=$userData->user_id;
 		$userData = json_encode($userData);
 		echo '{"userData":'.$userData.'}';
-
     }
     else 
     {
     	echo '{"error":"Wrong username and password"}';
     }
-
-    
 }
 
 function signup() {
     
 	require 'config.php';
-
 	$json = json_decode(file_get_contents('php://input'), true);
 	$username = $json['username'];
 	$password = $json['password'];
 	$email = $json['email'];
 	$name = $json['name'];
-
 	$username_check = preg_match("/^[A-Za-z0-9_]{4,10}$/i", $username);
 	$email_check = preg_match('/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,4})$/i', $email);
 	$password_check = preg_match('/^[A-Za-z0-9!@#$%^&*()_]{4,20}$/i', $password);
@@ -54,19 +48,14 @@ function signup() {
 	elseif (strlen(trim($username))>0 && strlen(trim($password))>0 && strlen(trim($email))>0 && 
 		$email_check>0 && $username_check>0 && $password_check>0)
 	{
-		
 		$userData = '';
-		
 		$result = $db->query("select * from users where username='$username' or email='$email'");
 		$rowCount=$result->num_rows;
 		//echo '{"text": "'.$rowCount.'"}';
-		
 		if($rowCount==0)
-		{
-							
+		{				
 			$db->query("INSERT INTO users(username,password,email,name)
 						VALUES('$username','$password','$email','$name')");
-
 			$userData ='';
 			$query = "select * from users where username='$username' and password='$password'";
 			$result= $db->query($query);
@@ -78,31 +67,24 @@ function signup() {
 		else {
 			echo '{"error":"username or email exists"}';
 		}
-
 	}
 	else{
 		echo '{"text":"Enter valid data2"}';
 	}
 }
 
-
 function feed(){
     
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
     $user_id=$json['user_id'];
-    
     $query = "SELECT * FROM feed WHERE user_id=$user_id ";
     //$query = "SELECT * FROM feed ";
     $result = $db->query($query); 
-
     $feedData = mysqli_fetch_all($result,MYSQLI_ASSOC);
     $feedData=json_encode($feedData);
-    
     echo '{"feedData":'.$feedData.'}';
-    
 }
-
 
 function feedUpdate(){
 
@@ -110,7 +92,6 @@ function feedUpdate(){
     $json = json_decode(file_get_contents('php://input'), true);
     $user_id=$json['user_id'];
     $feed=$json['feed'];
-    
     $feedData = '';
     if($user_id !=0)
     {
@@ -119,20 +100,17 @@ function feedUpdate(){
     }
     $query = "SELECT * FROM feed WHERE user_id=$user_id";
     $result = $db->query($query); 
-
     $feedData = mysqli_fetch_all($result,MYSQLI_ASSOC);
     $feedData=json_encode($feedData);
-    
     echo '{"feedData":'.$feedData.'}';
-
 }
 
 function feedDelete(){
+
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
     $user_id=$json['user_id'];
     $feed_id=$json['feed_id'];
-
     $query = "Delete FROM feed WHERE user_id=$user_id AND feed_id=$feed_id";
     $result = $db->query($query);
     if($result)       
@@ -142,7 +120,6 @@ function feedDelete(){
 
         echo '{"error":"Delete error"}';
     }
-    
 }
 
 ?>
