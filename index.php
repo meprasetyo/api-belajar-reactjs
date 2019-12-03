@@ -4,6 +4,8 @@ $type = $_GET['tp'];
 if($type=='signup') signup(); 
 elseif($type=='login') login(); 
 elseif($type=='feed') feed(); 
+elseif($type=='feedInsert') feedInsert(); 
+elseif($type=='feedEdit') feedEdit(); 
 elseif($type=='feedUpdate') feedUpdate(); 
 elseif($type=='feedDelete') feedDelete(); 
 function login() 
@@ -86,14 +88,14 @@ function feed(){
     echo '{"feedData":'.$feedData.'}';
 }
 
-function feedUpdate(){
+function feedInsert(){
 
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
     $user_id=$json['user_id'];
     $feed=$json['feed'];
     $feedData = '';
-    if($user_id !=0)
+    if($feed !='')
     {
         $query = "INSERT INTO feed ( feed, user_id) VALUES ('$feed','$user_id')";
         $db->query($query);              
@@ -120,6 +122,37 @@ function feedDelete(){
 
         echo '{"error":"Delete error"}';
     }
+}
+
+
+function feedEdit(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $feed_id=$json['feed_id'];
+    $query = "SELECT * FROM feed where feed_id = $feed_id";
+    $result = $db->query($query); 
+    $feedData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $feedData=json_encode($feedData);
+    echo '{"feedData":'.$feedData.'}';
+}
+
+function feedUpdate(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $feed_id=$json['feed_id'];
+    $feed=$json['feed'];
+    if($feed !='')
+    {
+    $query = "UPDATE feed SET feed='$feed' WHERE feed_id = $feed_id";
+    $db->query($query);   
+    }
+    $query = "SELECT * FROM feed WHERE feed_id = $feed_id ";
+    $result = $db->query($query); 
+    $feedData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $feedData=json_encode($feedData);
+    echo '{"feedData":'.$feedData.'}';
 }
 
 ?>
