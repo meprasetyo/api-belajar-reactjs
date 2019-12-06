@@ -6,7 +6,8 @@ elseif($type=='login') login();
 elseif($type=='karyawan') karyawan(); 
 elseif($type=='karyawanInput') karyawanInput(); 
 elseif($type=='karyawanUpdate') karyawanUpdate(); 
-elseif($type=='karyawanDelete') karyawanDelete(); 
+elseif($type=='karyawanDelete') karyawanDelete();
+elseif($type=='karyawanDeleteTableR') karyawanDeleteTableR();
 elseif($type=='karyawanEdit') karyawanEdit(); 
 
 function login() 
@@ -124,6 +125,22 @@ function karyawanDelete(){
 
         echo '{"error":"Delete error"}';
     } 
+}
+
+function karyawanDeleteTableR(){
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $id_karyawan=$json['id_karyawan'];
+	if($id_karyawan !='')
+    {
+        $query = "Delete FROM karyawan WHERE id_karyawan=$id_karyawan";
+        $db->query($query);              
+    }
+    $query = "SELECT * FROM karyawan order by id_karyawan DESC";
+    $result = $db->query($query); 
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
+    echo '{"karyawanData":'.$karyawanData.'}';
 }
 
 function karyawanEdit(){
