@@ -9,6 +9,8 @@ elseif($type=='karyawanUpdate') karyawanUpdate();
 elseif($type=='karyawanDelete') karyawanDelete();
 elseif($type=='karyawanDeleteTableR') karyawanDeleteTableR();
 elseif($type=='karyawanEdit') karyawanEdit(); 
+elseif($type=='selectKota') selectKota(); 
+
 
 function login() 
 { 
@@ -175,4 +177,14 @@ function karyawanUpdate(){
     echo '{"karyawanData":'.$karyawanData.'}';
 }
 
+function selectKota(){
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+	$user_id=$json['user_id'];
+    $query = "SELECT * FROM select_kota order by kota ASC";
+    $result = $db->query($query); 
+    $dataKota = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $dataKota=json_encode($dataKota);
+    echo '{"dataKota":'.$dataKota.'}';
+}
 ?>
