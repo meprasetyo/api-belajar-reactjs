@@ -11,6 +11,12 @@ elseif($type=='karyawanDeleteTableR') karyawanDeleteTableR();
 elseif($type=='karyawanEdit') karyawanEdit(); 
 elseif($type=='selectKota') selectKota(); 
 
+elseif($type=='karyawanSelect') karyawanSelect(); 
+elseif($type=='karyawanInputSelect') karyawanInputSelect(); 
+elseif($type=='karyawanUpdateSelect') karyawanUpdateSelect(); 
+elseif($type=='karyawanDeleteSelect') karyawanDeleteSelect();
+elseif($type=='karyawanDeleteTableRSelect') karyawanDeleteTableRSelect();
+elseif($type=='karyawanEditSelect') karyawanEditSelect(); 
 
 function login() 
 { 
@@ -187,4 +193,104 @@ function selectKota(){
     $dataKota=json_encode($dataKota);
     echo '{"dataKota":'.$dataKota.'}';
 }
+
+/* -------- select --------- */
+
+function karyawanSelect(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $user_id=$json['user_id'];
+    $query = "SELECT * FROM karyawannew order by id_karyawan DESC";
+    $result = $db->query($query); 
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
+    echo '{"karyawanData":'.$karyawanData.'}';
+}
+
+function karyawanInputSelect(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $nama=$json['nama'];
+	$KTP=$json['KTP'];
+	$no_hp=$json['no_hp'];
+	$id_kota=$json['id_kota'];
+    $feedData = '';
+    if($nama !='')
+    {
+        $query = "INSERT INTO karyawannew ( KTP, nama, no_hp, id_kota) VALUES ('$KTP','$nama','$no_hp', '$id_kota')";
+        $db->query($query);              
+    }
+    $query = "SELECT * FROM karyawannew WHERE KTP = $KTP ";
+    $result = $db->query($query); 
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
+    echo '{"karyawanData":'.$karyawanData.'}';
+}
+
+function karyawanDeleteSelect(){
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $id_karyawan=$json['id_karyawan'];
+    $query = "Delete FROM karyawannew WHERE id_karyawan=$id_karyawan ";
+    $result = $db->query($query);
+    if($result)       
+    {        
+        echo '{"success":"karyawan deleted"}';
+    } else{
+
+        echo '{"error":"Delete error"}';
+    } 
+}
+
+function karyawanDeleteTableRSelect(){
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $id_karyawan=$json['id_karyawan'];
+	if($id_karyawan !='')
+    {
+        $query = "Delete FROM karyawannew WHERE id_karyawan=$id_karyawan";
+        $db->query($query);              
+    }
+    $query = "SELECT * FROM karyawannew order by id_karyawan DESC";
+    $result = $db->query($query); 
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
+    echo '{"karyawanData":'.$karyawanData.'}';
+}
+
+function karyawanEditSelect(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $id_karyawan=$json['id_karyawan'];
+    $query = "SELECT * FROM karyawannew where id_karyawan = $id_karyawan";
+    $result = $db->query($query); 
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
+    echo '{"karyawanData":'.$karyawanData.'}';
+}
+
+function karyawanUpdateSelect(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $id_karyawan=$json['id_karyawan'];
+    $nama=$json['nama'];
+    $KTP=$json['KTP'];
+    $no_hp=$json['no_hp'];
+	$id_kota=$json['id_kota'];
+    if($nama !='')
+    {
+    $query = "UPDATE karyawannew SET KTP='$KTP', nama='$nama', no_hp='$no_hp', id_kota='$id_kota' WHERE id_karyawan = $id_karyawan";
+    $db->query($query);   
+    }
+    $query = "SELECT * FROM karyawannew WHERE KTP = $KTP ";
+    $result = $db->query($query); 
+    $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $karyawanData=json_encode($karyawanData);
+    echo '{"karyawanData":'.$karyawanData.'}';
+}
+
 ?>
