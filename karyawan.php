@@ -18,6 +18,8 @@ elseif($type=='karyawanDeleteSelect') karyawanDeleteSelect();
 elseif($type=='karyawanDeleteTableRSelect') karyawanDeleteTableRSelect();
 elseif($type=='karyawanEditSelect') karyawanEditSelect(); 
 
+elseif($type=='kotaInput') kotaInput(); 
+
 function login() 
 { 
     require 'config.php'; 
@@ -201,7 +203,7 @@ function karyawanSelect(){
     require 'config.php';
     $json = json_decode(file_get_contents('php://input'), true);
     $user_id=$json['user_id'];
-    $query = "SELECT * FROM karyawannew order by id_karyawan DESC";
+    $query = "SELECT * FROM view_karyawan order by id_karyawan DESC";
     $result = $db->query($query); 
     $karyawanData = mysqli_fetch_all($result,MYSQLI_ASSOC);
     $karyawanData=json_encode($karyawanData);
@@ -293,4 +295,22 @@ function karyawanUpdateSelect(){
     echo '{"karyawanData":'.$karyawanData.'}';
 }
 
+function kotaInput(){
+
+    require 'config.php';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $kota=$json['kota'];
+	
+    $feedData = '';
+    if($kota !='')
+    {
+        $query = "INSERT INTO select_kota (kota) VALUES ('$kota')";
+        $db->query($query);              
+    }
+    $query = "SELECT * FROM select_kota ";
+    $result = $db->query($query); 
+    $dataKota = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $dataKota=json_encode($dataKota);
+    echo '{"dataKota":'.$dataKota.'}';
+}
 ?>
