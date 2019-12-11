@@ -12,7 +12,9 @@ function login()
 { 
     require 'config.php'; 
     $json = json_decode(file_get_contents('php://input'), true); 
-    $username = $json['username']; $password = $json['password']; 
+    $username = $json['username']; 
+	$password = $json['password']; 
+	$password = hash('ripemd160', $password);
     $userData =''; $query = "select * from users where username='$username' and password='$password'"; 
     $result= $db->query($query);
     $rowCount=$result->num_rows;
@@ -35,20 +37,23 @@ function signup() {
 	$json = json_decode(file_get_contents('php://input'), true);
 	$username = $json['username'];
 	$password = $json['password'];
+	$password = hash('ripemd160', $password);
 	$email = $json['email'];
 	$name = $json['name'];
 	$username_check = preg_match("/^[A-Za-z0-9_]{4,10}$/i", $username);
 	$email_check = preg_match('/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,4})$/i', $email);
 	$password_check = preg_match('/^[A-Za-z0-9!@#$%^&*()_]{4,20}$/i', $password);
 	
-	if($username_check==0) 
+	//if($username_check==0)
+	if($username_check==0)
 		echo '{"error":"Invalid username"}';
 	elseif($email_check==0) 
 		echo '{"error":"Invalid email"}';
-	elseif($password_check ==0) 
+	//elseif($password_check ==0) 
+	elseif($password =='') 
 		echo '{"error":"Invalid password"}';
 	elseif (strlen(trim($username))>0 && strlen(trim($password))>0 && strlen(trim($email))>0 && 
-		$email_check>0 && $username_check>0 && $password_check>0)
+		$email_check>0 && $username_check>0 )
 	{
 		$userData = '';
 		$result = $db->query("select * from users where username='$username' or email='$email'");
